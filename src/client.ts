@@ -1,22 +1,23 @@
- import path from 'path';
+import path from 'path';
 import { fileURLToPath } from 'url';
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
+import type { ProtoGrpcType } from './proto/a.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const packageDefinition = protoLoader.loadSync(path.join(__dirname, '../src/a.proto'));
-const personProto = grpc.loadPackageDefinition(packageDefinition);
+const personProto = grpc.loadPackageDefinition(packageDefinition) as unknown as ProtoGrpcType;
 
 // Create the client
-const client = new (personProto.AddressBookService as grpc.ServiceClientConstructor)(
+const client = new personProto.AddressBookService(
     'localhost:50051',
     grpc.credentials.createInsecure()
-) as any;
+);
 
 // Test AddPerson
-client.addPerson({ name: 'Bob', age: 25 }, (err: any, response: any) => {
+client.AddPerson({ name: 'Bob', age: 25 }, (err: any, response: any) => {
     if (err) {
         console.error('Error adding person:', err);
     } else {
@@ -24,7 +25,7 @@ client.addPerson({ name: 'Bob', age: 25 }, (err: any, response: any) => {
     }
 
     // Test GetPersonByName
-    client.getPersonByName({ name: 'Bob' }, (err: any, response: any) => {
+    client.GetPersonByName({ name: 'Bob' }, (err: any, response: any) => {
         if (err) {
             console.error('Error getting person:', err);
         } else {
