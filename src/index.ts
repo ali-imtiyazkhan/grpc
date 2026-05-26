@@ -49,7 +49,6 @@ server.addService((personProto.AddressBookService as grpc.ServiceClientConstruct
 });
 
 server.bindAsync("0.0.0.0:50051", grpc.ServerCredentials.createInsecure(), () => {
-    server.start();
     console.log("Server running on 0.0.0.0:50051");
 });
 
