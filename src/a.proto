@@ -6,7 +6,8 @@ message Person {
 }
 
 service AddressBookService{
-    rpc CreatePerson (Person) returns (Person);
+    rpc AddPerson (Person) returns (Person);
+    rpc GetPersonByName (GetPersonByNameRequest) returns (GetPersonByNameResponse);
 }
 
 message GetPersonByNameRequest {

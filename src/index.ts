@@ -1,10 +1,12 @@
 import path from 'path';
+import { fileURLToPath } from 'url';
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 
-// import { GrpcObject, ServiceClientConstructor } from '@grpc/grpc-js';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const loadPackageDefinition = protoLoader.loadSync(path.join(__dirname, 'a.proto'))
+const loadPackageDefinition = protoLoader.loadSync(path.join(__dirname, '../src/a.proto'))
 
 const personProto = grpc.loadPackageDefinition(loadPackageDefinition)
 
@@ -42,20 +44,13 @@ function addPerson (call, callback) {
 const server = new grpc.Server();
 
 server.addService((personProto.AddressBookService as grpc.ServiceClientConstructor).service, {
-    addPerson : addPerson
+    addPerson : addPerson,
+    getPersonByName : getPersonByName
 });
 
-server.addService((personProto.GetPersonByNameRequest as grpc.ServiceClientConstructor).service, {
-    getPersonByName : getPersonByName
-})
-
-
-server.addService((personProto.GetPersonByNameResponse as grpc.ServiceClientConstructor).service, {
-    getPersonByName : getPersonByName
-})
-server.bindAsync("[IP_ADDRESS]", grpc.ServerCredentials.createInsecure(), () => {
+server.bindAsync("0.0.0.0:50051", grpc.ServerCredentials.createInsecure(), () => {
     server.start();
-    console.log("Server running on [IP_ADDRESS]");
+    console.log("Server running on 0.0.0.0:50051");
 });
 
 
