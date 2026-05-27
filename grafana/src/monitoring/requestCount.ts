@@ -7,6 +7,12 @@ const requestCounter = new client.Counter({
     labelNames: ["method", "route", "status"]
 });
 
+const activeUserGauge = new client.Gauge({
+    name: "active_user",
+    help: "total active user",
+    labelNames: ["route", "method", "status"]
+});
+
 export function requestCounterMiddleware(req: Request, res: Response, next: NextFunction) {
     const startTime = Date.now();
 
@@ -22,6 +28,22 @@ export function requestCounterMiddleware(req: Request, res: Response, next: Next
             route: req.url,
             status: res.statusCode
         });
+
+        if (res.statusCode == 200 || res.statusCode == 201) {
+            activeUserGauge.inc({
+                method: req.method,
+                route: req.url,
+                status: res.statusCode
+            });
+        } else {
+            activeUserGauge.dec({
+                method: req.method,
+                route: req.url,
+                status: res.statusCode
+            });
+        }
+
+
     });
 
     next()

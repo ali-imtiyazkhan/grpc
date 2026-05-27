@@ -20,19 +20,26 @@ app.use((_req: any, _res: any, next: any) => {
     console.log(`timetake ${timetake} ms`)
 })
 
-app.get("/user", (req, res) => {
+app.get("/user", (_req: any, res: any) => {
     let user = {
         name: 'imtiyaz',
         age: 20
     }
-    res.json(user)
+    res.status(200).json(user)
 })
 
 app.get('/', (_req: any, _res: any) => {
-    _res.json({
+    _res.status(200).json({
         message: 'all is well'
     })
 })
+
+app.get("/error", (_req: any, res: any) => {
+    res.status(500).json({
+        message: "something went wrong"
+    })
+})
+
 
 app.get("/metrics", async (req, res) => {
     const matrics = await client.register.metrics();
