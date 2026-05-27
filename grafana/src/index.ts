@@ -1,7 +1,10 @@
 import express from 'express'
+import { requestCounterMiddleware } from './monitoring/requestCount.js';
+import client from "prom-client"
 const app = express();
 
-app.use(express.json())
+app.use(express.json());
+app.use(requestCounterMiddleware)
 
 app.use((_req: any, _res: any, next: any) => {
     console.log("middleware entrypoint ")
@@ -29,6 +32,13 @@ app.get('/', (_req: any, _res: any) => {
     _res.json({
         message: 'all is well'
     })
+})
+
+app.get("/metrics", async (req, res) => {
+    const matrics = await client.register.metrics();
+    res.set('Content-Type', client.register.contentType);
+
+    res.end(matrics)
 })
 
 app.listen(3000, () => {
