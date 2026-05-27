@@ -1,10 +1,13 @@
 import express from 'express'
 import { requestCounterMiddleware } from './monitoring/requestCount.js';
 import client from "prom-client"
+import { requestHistrogramMiddleware } from './monitoring/histrogram.js';
 const app = express();
 
 app.use(express.json());
 app.use(requestCounterMiddleware)
+
+app.use(requestHistrogramMiddleware)
 
 app.use((_req: any, _res: any, next: any) => {
     console.log("middleware entrypoint ")
