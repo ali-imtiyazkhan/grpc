@@ -10,7 +10,7 @@ const consumer = kafka.consumer({
     groupId: 'test-group'
 })
 
-const run = async () => {
+export const startConsumer = async () => {
     await consumer.connect();
     await consumer.subscribe({
         topic: 'test-topic',
@@ -30,4 +30,6 @@ const run = async () => {
 }
 
 
-await run().catch(console.error)
+if (import.meta.main) {
+    await startConsumer().catch(console.error)
+}

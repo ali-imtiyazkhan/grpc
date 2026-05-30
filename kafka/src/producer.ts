@@ -7,7 +7,7 @@ const kafka = new Kafka({
 
 const producer = kafka.producer();
 
-const run = async () => {
+export const startProducer = async () => {
     await producer.connect();
 
     await producer.send({
@@ -19,4 +19,6 @@ const run = async () => {
     await producer.disconnect();
 }
 
-run().catch(console.error)
+if (import.meta.main) {
+    startProducer().catch(console.error)
+}
