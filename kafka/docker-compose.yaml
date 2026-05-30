@@ -1,18 +1,46 @@
 version: '3.8'
 
 services:
+  # The Kafka service container
   kafka:
     image: bitnami/kafka:latest
     container_name: kafka
+    
+    # Map port 9092 of the container to port 9092 on your host machine.
+    # This allows your TypeScript application to talk to Kafka at localhost:9092.
     ports:
       - "9092:9092"
+      
+    # Kafka Environment Configuration (KRaft Mode - no Zookeeper required)
     environment:
+      # 1. Unique ID for this node in the Kafka cluster.
       - KAFKA_CFG_NODE_ID=1
+      
+      # 2. Process roles. Since we have no separate controller/zookeeper,
+      # this single node acts as both the "broker" (handles messages) and "controller" (manages state).
       - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      
+      # 3. List of controller nodes participating in the consensus quorum. 
+      # Matches our Node ID (1) and hostname (kafka) on port 9093.
       - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      
+      # 4. Interface/port setups that Kafka listens on.
+      # Port 9092 is for general client traffic, and Port 9093 is for internal controller consensus.
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      
+      # 5. The host and port Kafka tells clients to use when connecting to it.
+      # This is crucial so your TS client running on localhost knows where to direct traffic.
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      
+      # 6. Map listeners to their security protocols (in this demo, unencrypted PLAINTEXT).
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      
+      # 7. Tells Kafka which listener name to use for controller consensus communication.
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      
+      # 8. Automatically create topics when a producer publishes or a consumer subscribes.
+      # This prevents "TopicNotFound" errors and removes the need to manually create topics first.
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
-      - KAFKA_KRAFT_CLUSTER_ID=abcdefghijklmnopqrstuv 
+      
+      # 9. A unique 22-character string that identifies this KRaft cluster.
+      - KAFKA_KRAFT_CLUSTER_ID=abcdefghijklmnopqrstuv 
