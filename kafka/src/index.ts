@@ -1,45 +1,7 @@
-import { Kafka } from "kafkajs";
+import express from "express"
 
-const kafka = new Kafka({
-    clientId: "my-app",
-    brokers: ["localhost:9092"],
+const app = express();
+
+app.listen(3000, () => {
+    console.log("Server is running on port 3000");
 })
-
-const producer = kafka.producer();
-const consumer = kafka.consumer({
-    groupId: 'test-group'
-})
-
-
-const run = async () => {
-    await producer.connect();
-    await producer.send({
-        topic: 'test-topic',
-        messages: [
-            { value: 'hello from inside the kafka producer' }
-        ]
-    })
-    await producer.disconnect();
-}
-
-await consumer.connect();
-
-await consumer.subscribe({
-    topic:'test-topic',
-    fromBeginning : false
-})
-
-
-await consumer.run({
-    eachMessage: async ({ topic, partition, message }) => {
-        console.log({
-            partition,
-            topic,
-            value: message.value?.toString(),
-            offset: message.offset
-        })
-    }
-})
-
-
-run().catch(console.error)
