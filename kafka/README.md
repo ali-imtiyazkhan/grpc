@@ -1,58 +1,100 @@
-# kafka
+# Kafka TypeScript Demo
 
-we are going to use kafka in docker.
+A simple, lightweight Kafka integration using TypeScript, `kafkajs`, and the **Bun** runtime. This project contains configurations for running Kafka in Docker and implementing basic consumer, producer, and Express server scripts.
 
+---
 
-# install kafka in docker.
-```bash
-docker-compose -f docker-compose.yaml up -d
-```
+## 🛠️ Prerequisites
 
-# and the command for running kafka
+Ensure you have the following installed:
+* [Docker & Docker Compose](https://www.docker.com/)
+* [Bun Runtime](https://bun.sh/) (v1.3.14 or later)
 
-## run kafka
-```bash
-docker exec -it kafka bash
-```
-## kafka-topics
-```bash
-kafka-topics --bootstrap-server localhost:9092 --create --topic test-topic --partitions 1 --replication-factor 1
-```
+---
 
-## console producer
-```bash
-kafka-console-producer --bootstrap-server localhost:9092 --topic test-topic
-```
+## 🚀 Getting Started
 
-# console consumer
+### 1. Start Kafka Broker
+
+The project includes a `docker-compose.yaml` configured to run KRaft-based Kafka (Bitnami image) on port `9092`. Start the broker using:
 
 ```bash
-kafka-console-consumer --bootstrap-server localhost:9092 --topic test-topic
+docker-compose up -d
 ```
 
-docker run -d --name kafka -p 9092:9092 apache/kafka:3.7.1
-docker ps
+To stop the broker:
+```bash
+docker-compose down
+```
 
-docker exec -it [container_id] /bin/bash
-cd bin
+### 2. Install Dependencies
 
-kafka-topics --bootstrap-server localhost:9092 --create --topic test-topic --partitions 1 --replication-factor 1
+Install the project dependencies using Bun:
 
-kafka-console-producer --bootstrap-server localhost:9092 --topic test-topic
-
-kafka-console-consumer --bootstrap-server localhost:9092 --topic test-topic
-
-
-
-## To install dependencies:
 ```bash
 bun install
 ```
 
-# To run:
+### 3. Run the Applications
 
+You can run the different components of the demo using Bun:
+
+* **Start the Express Server:**
+  ```bash
+  bun run src/index.ts
+  ```
+  *(Runs a basic server on `http://localhost:3000`)*
+
+* **Run the Consumer:**
+  Keep this running in a terminal to listen for messages on `test-topic`:
+  ```bash
+  bun run src/consumer.ts
+  ```
+
+* **Run the Producer:**
+  Run this script in a separate terminal to publish a message (`hello world from producer`) to `test-topic`:
+  ```bash
+  bun run src/producer.ts
+  ```
+
+---
+
+## 💻 Working with Kafka CLI (Optional)
+
+If you want to manually interact with the Kafka broker inside the running Docker container, use the following commands.
+
+> [!NOTE]
+> Since we use the Bitnami Kafka image, utility scripts are located in `/opt/bitnami/kafka/bin/`.
+
+### 1. Access the Kafka Container
 ```bash
-bun run index.ts
+docker exec -it kafka bash
 ```
 
-This project was created using `bun init` in bun v1.3.14. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+### 2. Create a Topic
+*(Note: Auto-topic creation is enabled by default in the docker-compose settings, but you can create topics manually.)*
+```bash
+/opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --topic test-topic --partitions 1 --replication-factor 1
+```
+
+### 3. Start a Console Producer
+Send manual messages from your command line:
+```bash
+/opt/bitnami/kafka/bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic test-topic
+```
+
+### 4. Start a Console Consumer
+Listen to messages from the beginning:
+```bash
+/opt/bitnami/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test-topic --from-beginning
+```
+
+---
+
+## 📂 Project Structure
+
+* [docker-compose.yaml](file:///d:/grpc/kafka/docker-compose.yaml) - Kafka service config.
+* [src/index.ts](file:///d:/grpc/kafka/src/index.ts) - A simple Express starter.
+* [src/producer.ts](file:///d:/grpc/kafka/src/producer.ts) - Simple producer using `kafkajs`.
+* [src/consumer.ts](file:///d:/grpc/kafka/src/consumer.ts) - Simple consumer using `kafkajs`.
+
