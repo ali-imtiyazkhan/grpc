@@ -37,25 +37,28 @@ bun install
 
 ### 3. Run the Applications
 
-You can run the different components of the demo using Bun:
+You can run the different components of the demo using the script commands defined in `package.json` or by calling the files directly:
 
 * **Start the Express Server:**
   ```bash
-  bun run src/index.ts
+  bun run start
+  # Or: bun run src/index.ts
   ```
-  *(Runs a basic server on `http://localhost:3000`)*
+  *(Starts the Express server on `http://localhost:3000` and automatically starts the background Kafka consumer)*
 
-* **Run the Consumer:**
-  Keep this running in a terminal to listen for messages on `test-topic`:
+* **Run the Consumer (standalone):**
   ```bash
-  bun run src/consumer.ts
+  bun run consumer
+  # Or: bun run src/consumer.ts
   ```
+  *(Listens for messages on `test-topic`)*
 
-* **Run the Producer:**
-  Run this script in a separate terminal to publish a message (`hello world from producer`) to `test-topic`:
+* **Run the Producer (standalone):**
   ```bash
-  bun run src/producer.ts
+  bun run producer
+  # Or: bun run src/producer.ts
   ```
+  *(Publishes a message to `test-topic`)*
 
 ---
 
